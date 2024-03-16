@@ -5,7 +5,7 @@ git clean -f -d -X
 rm -f firmware.uf2
 
 echo building \
-  && make -C mpy-cross -j 8 \
+  && make -C mpy-cross -j 1 \
   && cd ports/rp2 \
   && make BOARD=RPI_PICO_W clean \
   && make submodules \
