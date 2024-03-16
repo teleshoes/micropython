@@ -59,6 +59,7 @@ typedef struct _mp_framebuf_p_t {
 // constants for formats
 #define FRAMEBUF_MVLSB    (0)
 #define FRAMEBUF_RGB565   (1)
+#define FRAMEBUF_RGB444   (7)
 #define FRAMEBUF_GS2_HMSB (5)
 #define FRAMEBUF_GS4_HMSB (2)
 #define FRAMEBUF_GS8      (6)
@@ -134,6 +135,55 @@ static void rgb565_fill_rect(const mp_obj_framebuf_t *fb, unsigned int x, unsign
             *b++ = col;
         }
         b += fb->stride - w;
+    }
+}
+
+// Functions for RGB444 format
+
+static void set_bytes(const mp_obj_framebuf_t *fb, uint32_t index, uint32_t color) {
+    uint32_t byte_index = (uint32_t)(index * 1.5);
+    if (index % 2 == 0) {
+        uint8_t *fullbyte = &((uint8_t *)fb->buf)[byte_index];
+        *fullbyte = color >> 4;
+        uint8_t *bufptr = &((uint8_t *)fb->buf)[byte_index + 1];
+        uint8_t buffer = *bufptr & 0x0f;
+        uint8_t *halfbyte = &((uint8_t *)fb->buf)[byte_index + 1];
+        *halfbyte = (color << 4 & 0xff) + buffer;
+    } else {
+        uint8_t *bufptr = &((uint8_t *)fb->buf)[byte_index];
+        uint8_t buffer = *bufptr & 0xf0;
+        uint8_t *halfbyte = &((uint8_t *)fb->buf)[byte_index];
+        *halfbyte = (color >> 8) + buffer;
+        uint8_t *fullbyte = &((uint8_t *)fb->buf)[byte_index + 1];
+        *fullbyte = (color & 0xff);
+    }
+}
+
+static void rgb444_setpixel(const mp_obj_framebuf_t *fb, unsigned int x, unsigned int y, uint32_t col) {
+    uint32_t index = (x + y * fb->stride);
+    set_bytes(fb, index, col);
+
+}
+
+static uint32_t rgb444_getpixel(const mp_obj_framebuf_t *fb, unsigned int x, unsigned int y) {
+    uint32_t index = (x + y * fb->stride);
+    uint32_t byte_index = (uint32_t)(index * 1.5);
+    uint8_t *first = &((uint8_t *)fb->buf)[byte_index];
+    uint8_t *second = &((uint8_t *)fb->buf)[byte_index + 1];
+    if (index % 2 == 0) {
+        return (*first << 4) + (*second >> 4);
+    } else {
+        return (*first << 8 & 0xfff) + (*second);
+    }
+}
+
+static void rgb444_fill_rect(const mp_obj_framebuf_t *fb, unsigned int x, unsigned int y, unsigned int w, unsigned int h, uint32_t col) {
+    uint32_t index = (x + y * fb->stride);
+    while (h--) {
+        for (unsigned int ww = w; ww; --ww) {
+            set_bytes(fb, index++, col);
+        }
+        index += fb->stride - w;
     }
 }
 
@@ -234,6 +284,7 @@ static void gs8_fill_rect(const mp_obj_framebuf_t *fb, unsigned int x, unsigned 
 static mp_framebuf_p_t formats[] = {
     [FRAMEBUF_MVLSB] = {mvlsb_setpixel, mvlsb_getpixel, mvlsb_fill_rect},
     [FRAMEBUF_RGB565] = {rgb565_setpixel, rgb565_getpixel, rgb565_fill_rect},
+    [FRAMEBUF_RGB444] = {rgb444_setpixel, rgb444_getpixel, rgb444_fill_rect},
     [FRAMEBUF_GS2_HMSB] = {gs2_hmsb_setpixel, gs2_hmsb_getpixel, gs2_hmsb_fill_rect},
     [FRAMEBUF_GS4_HMSB] = {gs4_hmsb_setpixel, gs4_hmsb_getpixel, gs4_hmsb_fill_rect},
     [FRAMEBUF_GS8] = {gs8_setpixel, gs8_getpixel, gs8_fill_rect},
@@ -311,6 +362,9 @@ static mp_obj_t framebuf_make_new_helper(size_t n_args, const mp_obj_t *args_in,
             break;
         case FRAMEBUF_RGB565:
             bpp = 16;
+            break;
+        case FRAMEBUF_RGB444:
+            bpp = 12;
             break;
         default:
             mp_raise_ValueError(MP_ERROR_TEXT("invalid format"));
@@ -909,6 +963,7 @@ static const mp_rom_map_elem_t framebuf_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_MVLSB), MP_ROM_INT(FRAMEBUF_MVLSB) },
     { MP_ROM_QSTR(MP_QSTR_MONO_VLSB), MP_ROM_INT(FRAMEBUF_MVLSB) },
     { MP_ROM_QSTR(MP_QSTR_RGB565), MP_ROM_INT(FRAMEBUF_RGB565) },
+    { MP_ROM_QSTR(MP_QSTR_RGB444), MP_ROM_INT(FRAMEBUF_RGB444) },
     { MP_ROM_QSTR(MP_QSTR_GS2_HMSB), MP_ROM_INT(FRAMEBUF_GS2_HMSB) },
     { MP_ROM_QSTR(MP_QSTR_GS4_HMSB), MP_ROM_INT(FRAMEBUF_GS4_HMSB) },
     { MP_ROM_QSTR(MP_QSTR_GS8), MP_ROM_INT(FRAMEBUF_GS8) },
