@@ -10,7 +10,7 @@ echo building \
   && make BOARD=RPI_PICO_W clean \
   && make submodules \
   && make \
-        USER_C_MODULES=../../../st7789_mpy/st7789/micropython.cmake \
+        USER_C_MODULES=../../lib/st7789_mpy/st7789/micropython.cmake \
         BOARD=RPI_PICO_W \
         FROZEN_MANIFEST=../boards/RPI_PICO_W/manifest.py \
         V=1 \
