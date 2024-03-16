@@ -1,4 +1,4 @@
-#sudo apt-get install gcc-arm-none-eabi
+sudo apt-get install gcc-arm-none-eabi
 
 git clean -f -d -X
 
