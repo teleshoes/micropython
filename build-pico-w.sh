@@ -1,4 +1,4 @@
-sudo apt-get install gcc-arm-none-eabi
+sudo apt-get install gcc-arm-none-eabi libstdc++-arm-none-eabi-newlib
 
 git clean -f -d -X
 
