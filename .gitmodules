@@ -65,3 +65,6 @@
 [submodule "lib/libmetal"]
 	path = lib/libmetal
 	url = https://github.com/OpenAMP/libmetal.git
+[submodule "lib/st7789_mpy"]
+	path = lib/st7789_mpy
+	url = https://github.com/teleshoes/st7789_mpy
