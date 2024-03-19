@@ -77,3 +77,6 @@
 [submodule "lib/st7789_mpy"]
 	path = lib/st7789_mpy
 	url = https://github.com/teleshoes/st7789_mpy
+[submodule "lib/pico-lcd"]
+	path = lib/pico-lcd
+	url = https://github.com/teleshoes/pico-lcd
