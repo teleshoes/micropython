@@ -8,7 +8,7 @@ echo building \
   && make -C mpy-cross -j 1 \
   && cd ports/rp2 \
   && make BOARD=RPI_PICO_W clean \
-  && make submodules \
+  && make submodules BOARD=RPI_PICO_W \
   && make \
         USER_C_MODULES=../../lib/st7789_mpy/st7789/micropython.cmake \
         BOARD=RPI_PICO_W \
