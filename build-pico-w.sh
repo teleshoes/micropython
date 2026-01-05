@@ -2,7 +2,7 @@ sudo apt-get install gcc-arm-none-eabi libstdc++-arm-none-eabi-newlib
 
 git clean -f -d -X
 
-rm -f firmware.uf2
+rm -f firmware_*.uf2
 
 echo building \
   && make -C mpy-cross -j 1 \
@@ -16,5 +16,5 @@ echo building \
         V=1 \
         -j 8 \
   && cd ../.. \
-  && cp -a ports/rp2/build-RPI_PICO_W/firmware.uf2 . \
+  && cp -a ports/rp2/build-RPI_PICO_W/firmware.uf2 firmware_RPI_PICO_W.uf2 \
   && echo SUCCESS
