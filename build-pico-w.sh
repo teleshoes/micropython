@@ -1,7 +1,5 @@
 sudo apt-get install gcc-arm-none-eabi libstdc++-arm-none-eabi-newlib
 
-git clean -f -d -X
-
 rm -f firmware_*.uf2
 
 BOARD_NAME=RPI_PICO_W
