@@ -23,3 +23,4 @@ function build() {
 }
 
 build "RPI_PICO_W"
+build "RPI_PICO2_W"
