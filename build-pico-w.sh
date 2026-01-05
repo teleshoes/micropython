@@ -4,10 +4,12 @@ rm -f firmware_*.uf2
 
 BOARD_NAME=RPI_PICO_W
 
+SKIP_CLEAN=N
+
 echo building \
   && make -C mpy-cross -j 1 \
   && cd ports/rp2 \
-  && make BOARD=$BOARD_NAME clean \
+  && if [ $SKIP_CLEAN = Y ]; then echo skip clean; else make BOARD=$BOARD_NAME clean; fi \
   && make submodules BOARD=$BOARD_NAME \
   && make \
         USER_C_MODULES=../../lib/st7789_mpy/st7789/micropython.cmake \
