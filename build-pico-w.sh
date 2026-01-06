@@ -1,3 +1,5 @@
+#!/bin/bash
+
 sudo apt-get install gcc-arm-none-eabi libstdc++-arm-none-eabi-newlib
 
 rm -f firmware_*.uf2
